@@ -1,0 +1,2 @@
+# New Relic Alerts Terraform module
+This Terraform module constructs and configures the necessary resources for NewRelic alert settings, including Alert Conditions, Alert Policies, Destinations, and Workflows.
