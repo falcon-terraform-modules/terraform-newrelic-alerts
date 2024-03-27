@@ -22,7 +22,7 @@ provider "newrelic" {
   api_key    = "NRAK-XXXXXXXXXXXXXXXXXXXXXXXXX"
 }
 ```
-##### version.tf
+##### versions.tf
 ```hcl
 terraform {
   required_version = ">= 1.7.0"

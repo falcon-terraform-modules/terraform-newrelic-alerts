@@ -26,22 +26,22 @@ This Terraform module constructs and configures the necessary resources for NewR
 |------|-------------|------|---------|:--------:|
 | <a name="input_alert_policy_name"></a> [alert\_policy\_name](#input\_alert\_policy\_name) | The name of the policy to group alert conditions. | `string` | n/a | yes |
 | <a name="input_newrelic_account_id"></a> [newrelic\_account\_id](#input\_newrelic\_account\_id) | Specifies the New Relic account where the alerts setting will be created. | `string` | n/a | yes |
-| <a name="input_notifications"></a> [notifications](#input\_notifications) | Specifies the parameters necessary to configure alert notification destinations. | `any` | n/a | yes |
+| <a name="input_notifications"></a> [notifications](#input\_notifications) | Specifies the parameters necessary to configure alert notification destinations. See [Nested Inputs Reference](https://registry.terraform.io/modules/falcon-terraform-modules/alerts/newrelic/latest#notifications) for details. | `any` | n/a | yes |
 | <a name="input_nrql_alert_conditions"></a> [nrql\_alert\_conditions](#input\_nrql\_alert\_conditions) | The name of the CSV file defined alert condition settings. Specify the name of CSV file using csvdecode function and file function (for example, csvdecode(file("nrql\_alert\_conditions.csv"))). | `any` | n/a | yes |
 | <a name="input_workflow_muting_rules_handling"></a> [workflow\_muting\_rules\_handling](#input\_workflow\_muting\_rules\_handling) | Specifies how to handle muted issues. See https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/workflow#muting-rules for details. | `string` | n/a | yes |
 | <a name="input_workflow_name"></a> [workflow\_name](#input\_workflow\_name) | The name of the workflow. | `string` | n/a | yes |
 ## Outputs
 
 No outputs.
-## Nested Input Reference
+## Nested Inputs Reference
 ### notifications
 - `name` - The name of the destination. When type is `SLACK`, it is channel name.
-- `type` - The type of the destination. Allowed value is `EMAIL`, `PAGERDUTY_SERVICE_INTEGRATION`, `SLACK`
+- `type` - The type of the destination. Allowed value is `EMAIL`, `PAGERDUTY_SERVICE_INTEGRATION`, `SLACK`.
 - `destination_properties` - Specifies the properties of the destination. This input is required when the type is `EMAIL`.
-  - `key` - Allowed value is `email`
+  - `key` - Allowed value is `email`.
   - `value` - Specifies the email address to alert notification. If specifies multiple email addresses, connect them with `,`.
 - `destination_auth_tokens` - Specifies the auth tokens of the destination. This input is required when the type is `PAGERDUTY_SERVICE_INTEGRATION`.
-  - `prefix` - Allowed value is `Token token=`
+  - `prefix` - Allowed value is `Token token=`.
   - `token` - Specifies the token for integration.
 - `destination_id` - Specifies the destination ID. This input is required when the type is `SLACK`. When the type is `SLACK` the destination is Slack workspace, and it is necessary to register the destination through the console. Refer to [New Relic Official Documentation](https://docs.newrelic.com/jp/docs/alerts-applied-intelligence/notifications/notification-integrations/#slack) for the registration procedure. After registering the destination, copy the destination ID from the destination list screen and specify it here.
 - `channel_properties` - Specifies the properties of the channel. See https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/notification_channel#nested-property-blocks for details.
@@ -57,7 +57,7 @@ provider "newrelic" {
   api_key    = "NRAK-XXXXXXXXXXXXXXXXXXXXXXXXX"
 }
 ```
-##### version.tf
+##### versions.tf
 ```hcl
 terraform {
   required_version = ">= 1.7.0"
@@ -84,8 +84,8 @@ For editing the CSV, it is recommended to use the CSV editing plugin of the IDE.
 ## Example Usage
 ```hcl
 module "alerts" {
-  source                         = "falcon-terraform-modules/alerts/newrelic"
-  
+  source = "falcon-terraform-modules/alerts/newrelic"
+
   newrelic_account_id            = "1234567"
   alert_policy_name              = "Example Production"
   nrql_alert_conditions          = csvdecode(file("nrql_alert_conditions.csv"))

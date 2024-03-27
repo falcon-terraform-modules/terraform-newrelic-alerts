@@ -14,7 +14,7 @@ variable "nrql_alert_conditions" {
 }
 
 variable "notifications" {
-  description = "Specifies the parameters necessary to configure alert notification destinations."
+  description = "Specifies the parameters necessary to configure alert notification destinations. See [Nested Inputs Reference](https://registry.terraform.io/modules/falcon-terraform-modules/alerts/newrelic/latest#notifications) for details."
   type        = any
 }
 
