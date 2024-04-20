@@ -1,6 +1,6 @@
 resource "newrelic_alert_policy" "main" {
   name                = var.alert_policy_name
-  incident_preference = "PER_CONDITION_AND_TARGET"
+  incident_preference = var.alert_policy_incident_preference
 }
 
 resource "newrelic_nrql_alert_condition" "this" {

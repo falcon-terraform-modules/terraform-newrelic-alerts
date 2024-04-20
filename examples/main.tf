@@ -1,11 +1,12 @@
 module "alerts" {
   source = "falcon-terraform-modules/alerts/newrelic"
 
-  newrelic_account_id            = "1234567"
-  alert_policy_name              = "Example Production"
-  nrql_alert_conditions          = csvdecode(file("nrql_alert_conditions.csv"))
-  workflow_name                  = "Example Production"
-  workflow_muting_rules_handling = "DONT_NOTIFY_FULLY_MUTED_ISSUES"
+  newrelic_account_id              = "1234567"
+  alert_policy_name                = "Example Production"
+  alert_policy_incident_preference = "PER_CONDITION_AND_TARGET"
+  nrql_alert_conditions            = csvdecode(file("nrql_alert_conditions.csv"))
+  workflow_name                    = "Example Production"
+  workflow_muting_rules_handling   = "DONT_NOTIFY_FULLY_MUTED_ISSUES"
   notifications = [
     {
       name = "Example Production Alerts Email"

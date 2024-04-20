@@ -8,6 +8,12 @@ variable "alert_policy_name" {
   type        = string
 }
 
+variable "alert_policy_incident_preference" {
+  description = "The rollup strategy for the policy, which can have one of the following values (the default value is `PER_POLICY`). See https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/alert_policy#incident_preference for details."
+  type        = string
+  default     = "PER_POLICY"
+}
+
 variable "nrql_alert_conditions" {
   description = "The name of the CSV file defined alert condition settings. Specify the name of CSV file using csvdecode function and file function (for example, csvdecode(file(\"nrql_alert_conditions.csv\")))."
   type        = any
