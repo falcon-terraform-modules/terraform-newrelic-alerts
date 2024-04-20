@@ -18,12 +18,19 @@ sections:
 
 content: |-
   {{ .Header }}
+
   {{ .Requirements }}
+
   {{ .Providers }}
+
   {{ .Resources }}
+
   {{ .Inputs }}
+
   {{ .Outputs }}
+
   {{ .Footer }}
+
   ## Example Usage
   ```hcl
   {{ include "examples/main.tf" }}
@@ -41,8 +48,7 @@ output-values:
   from: ""
 
 sort:
-  enabled: true
-  by: name
+  enabled: false
 
 settings:
   anchor: true

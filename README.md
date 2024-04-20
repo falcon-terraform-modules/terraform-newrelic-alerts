@@ -1,16 +1,19 @@
 <!-- BEGIN_TF_DOCS -->
 # New Relic Alerts Terraform module
 This Terraform module constructs and configures the necessary resources for NewRelic alert settings, including Alert Conditions, Alert Policies, Destinations, and Workflows.
+
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_newrelic"></a> [newrelic](#requirement\_newrelic) | >= 3.28.1 |
+
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_newrelic"></a> [newrelic](#provider\_newrelic) | >= 3.28.1 |
+
 ## Resources
 
 | Name | Type |
@@ -20,19 +23,22 @@ This Terraform module constructs and configures the necessary resources for NewR
 | [newrelic_notification_destination.this](https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/notification_destination) | resource |
 | [newrelic_nrql_alert_condition.this](https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/nrql_alert_condition) | resource |
 | [newrelic_workflow.main](https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/workflow) | resource |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_alert_policy_name"></a> [alert\_policy\_name](#input\_alert\_policy\_name) | The name of the policy to group alert conditions. | `string` | n/a | yes |
 | <a name="input_newrelic_account_id"></a> [newrelic\_account\_id](#input\_newrelic\_account\_id) | Specifies the New Relic account where the alerts setting will be created. | `string` | n/a | yes |
-| <a name="input_notifications"></a> [notifications](#input\_notifications) | Specifies the parameters necessary to configure alert notification destinations. See [Nested Inputs Reference](https://registry.terraform.io/modules/falcon-terraform-modules/alerts/newrelic/latest#notifications) for details. | `any` | n/a | yes |
+| <a name="input_alert_policy_name"></a> [alert\_policy\_name](#input\_alert\_policy\_name) | The name of the policy to group alert conditions. | `string` | n/a | yes |
 | <a name="input_nrql_alert_conditions"></a> [nrql\_alert\_conditions](#input\_nrql\_alert\_conditions) | The name of the CSV file defined alert condition settings. Specify the name of CSV file using csvdecode function and file function (for example, csvdecode(file("nrql\_alert\_conditions.csv"))). | `any` | n/a | yes |
-| <a name="input_workflow_muting_rules_handling"></a> [workflow\_muting\_rules\_handling](#input\_workflow\_muting\_rules\_handling) | Specifies how to handle muted issues. See https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/workflow#muting-rules for details. | `string` | n/a | yes |
+| <a name="input_notifications"></a> [notifications](#input\_notifications) | Specifies the parameters necessary to configure alert notification destinations. See [Nested Inputs Reference](https://registry.terraform.io/modules/falcon-terraform-modules/alerts/newrelic/latest#notifications) for details. | `any` | n/a | yes |
 | <a name="input_workflow_name"></a> [workflow\_name](#input\_workflow\_name) | The name of the workflow. | `string` | n/a | yes |
+| <a name="input_workflow_muting_rules_handling"></a> [workflow\_muting\_rules\_handling](#input\_workflow\_muting\_rules\_handling) | Specifies how to handle muted issues. See https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/workflow#muting-rules for details. | `string` | n/a | yes |
+
 ## Outputs
 
 No outputs.
+
 ## Nested Inputs Reference
 ### notifications
 - `name` - The name of the destination. When type is `SLACK`, it is channel name.
@@ -50,17 +56,16 @@ No outputs.
 ## Usage
 ### 1. Configure NewRelic Provider
 #### Example
-##### provider.tf
+##### providers.tf
 ```hcl
 provider "newrelic" {
   account_id = "1234567"
   api_key    = "NRAK-XXXXXXXXXXXXXXXXXXXXXXXXX"
 }
 ```
-##### versions.tf
+##### terraform.tf
 ```hcl
 terraform {
-  required_version = ">= 1.7.0"
   required_providers {
     newrelic = {
       source  = "newrelic/newrelic"
@@ -81,6 +86,7 @@ terraform {
 For editing the CSV, it is recommended to use the CSV editing plugin of the IDE. If you are using VSCode, consider using something like [Edit csv](https://marketplace.visualstudio.com/items?itemName=janisdd.vscode-edit-csv).
 
 ### 3. Deploy module with refer to example usage
+
 ## Example Usage
 ```hcl
 module "alerts" {
