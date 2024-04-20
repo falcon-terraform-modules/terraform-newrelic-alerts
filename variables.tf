@@ -14,16 +14,6 @@ variable "alert_policy_incident_preference" {
   default     = "PER_POLICY"
 }
 
-variable "nrql_alert_conditions" {
-  description = "The name of the CSV file defined alert condition settings. Specify the name of CSV file using csvdecode function and file function (for example, csvdecode(file(\"nrql_alert_conditions.csv\")))."
-  type        = any
-}
-
-variable "notifications" {
-  description = "Specifies the parameters necessary to configure alert notification destinations. See [Nested Inputs Reference](https://registry.terraform.io/modules/falcon-terraform-modules/alerts/newrelic/latest#notifications) for details."
-  type        = any
-}
-
 variable "workflow_name" {
   description = "The name of the workflow."
   type        = string
@@ -32,4 +22,31 @@ variable "workflow_name" {
 variable "workflow_muting_rules_handling" {
   description = "Specifies how to handle muted issues. See https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/workflow#muting-rules for details."
   type        = string
+}
+
+variable "notifications" {
+  description = "Specifies the parameters necessary to configure alert notification destinations. See `Nested Inputs Reference` for details."
+  type = list(object({
+    name = string
+    type = string
+    destination_properties = optional(list(object({
+      key   = string
+      value = string
+    })))
+    destination_id = optional(string)
+    channel_properties = list(object({
+      key   = string
+      value = string
+    }))
+    destination_auth_tokens = optional(list(object({
+      prefix = string
+      token  = string
+    })))
+    notification_triggers = list(string)
+  }))
+}
+
+variable "nrql_alert_conditions" {
+  description = "The name of the CSV file defined alert condition settings. Specify the name of CSV file using csvdecode function and file function (for example, csvdecode(file(\"nrql_alert_conditions.csv\")))."
+  type        = any
 }

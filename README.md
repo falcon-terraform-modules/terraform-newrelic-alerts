@@ -31,10 +31,10 @@ This Terraform module constructs and configures the necessary resources for NewR
 | <a name="input_newrelic_account_id"></a> [newrelic\_account\_id](#input\_newrelic\_account\_id) | Specifies the New Relic account where the alerts setting will be created. | `string` | n/a | yes |
 | <a name="input_alert_policy_name"></a> [alert\_policy\_name](#input\_alert\_policy\_name) | The name of the policy to group alert conditions. | `string` | n/a | yes |
 | <a name="input_alert_policy_incident_preference"></a> [alert\_policy\_incident\_preference](#input\_alert\_policy\_incident\_preference) | The rollup strategy for the policy, which can have one of the following values (the default value is `PER_POLICY`). See https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/alert_policy#incident_preference for details. | `string` | `"PER_POLICY"` | no |
-| <a name="input_nrql_alert_conditions"></a> [nrql\_alert\_conditions](#input\_nrql\_alert\_conditions) | The name of the CSV file defined alert condition settings. Specify the name of CSV file using csvdecode function and file function (for example, csvdecode(file("nrql\_alert\_conditions.csv"))). | `any` | n/a | yes |
-| <a name="input_notifications"></a> [notifications](#input\_notifications) | Specifies the parameters necessary to configure alert notification destinations. See [Nested Inputs Reference](https://registry.terraform.io/modules/falcon-terraform-modules/alerts/newrelic/latest#notifications) for details. | `any` | n/a | yes |
 | <a name="input_workflow_name"></a> [workflow\_name](#input\_workflow\_name) | The name of the workflow. | `string` | n/a | yes |
 | <a name="input_workflow_muting_rules_handling"></a> [workflow\_muting\_rules\_handling](#input\_workflow\_muting\_rules\_handling) | Specifies how to handle muted issues. See https://registry.terraform.io/providers/newrelic/newrelic/latest/docs/resources/workflow#muting-rules for details. | `string` | n/a | yes |
+| <a name="input_notifications"></a> [notifications](#input\_notifications) | Specifies the parameters necessary to configure alert notification destinations. See `Nested Inputs Reference` for details. | <pre>list(object({<br>    name = string<br>    type = string<br>    destination_properties = optional(list(object({<br>      key   = string<br>      value = string<br>    })))<br>    destination_id = optional(string)<br>    channel_properties = list(object({<br>      key   = string<br>      value = string<br>    }))<br>    destination_auth_tokens = optional(list(object({<br>      prefix = string<br>      token  = string<br>    })))<br>    notification_triggers = list(string)<br>  }))</pre> | n/a | yes |
+| <a name="input_nrql_alert_conditions"></a> [nrql\_alert\_conditions](#input\_nrql\_alert\_conditions) | The name of the CSV file defined alert condition settings. Specify the name of CSV file using csvdecode function and file function (for example, csvdecode(file("nrql\_alert\_conditions.csv"))). | `any` | n/a | yes |
 
 ## Outputs
 
@@ -96,7 +96,6 @@ module "alerts" {
   newrelic_account_id              = "1234567"
   alert_policy_name                = "Example Production"
   alert_policy_incident_preference = "PER_CONDITION_AND_TARGET"
-  nrql_alert_conditions            = csvdecode(file("nrql_alert_conditions.csv"))
   workflow_name                    = "Example Production"
   workflow_muting_rules_handling   = "DONT_NOTIFY_FULLY_MUTED_ISSUES"
   notifications = [
@@ -174,6 +173,7 @@ module "alerts" {
       ]
     }
   ]
+  nrql_alert_conditions = csvdecode(file("nrql_alert_conditions.csv"))
 }
 ```
 <!-- END_TF_DOCS -->

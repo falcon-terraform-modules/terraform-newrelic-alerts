@@ -3,6 +3,63 @@ resource "newrelic_alert_policy" "main" {
   incident_preference = var.alert_policy_incident_preference
 }
 
+resource "newrelic_notification_destination" "this" {
+  for_each   = { for i in var.notifications : i.name => i if i.type != "SLACK" }
+  account_id = var.newrelic_account_id
+  name       = each.value.name
+  type       = each.value.type
+  dynamic "property" {
+    for_each = each.value.type == "PAGERDUTY_SERVICE_INTEGRATION" ? [{ key = "", value = "" }] : each.value.destination_properties
+    content {
+      key   = property.value.key
+      value = property.value.value
+    }
+  }
+  dynamic "auth_token" {
+    for_each = each.value.type == "PAGERDUTY_SERVICE_INTEGRATION" ? each.value.destination_auth_tokens : []
+    content {
+      prefix = auth_token.value.prefix
+      token  = auth_token.value.token
+    }
+  }
+}
+
+resource "newrelic_notification_channel" "this" {
+  for_each       = { for i in var.notifications : i.name => i }
+  name           = each.value.name
+  type           = each.value.type
+  destination_id = each.value.type == "SLACK" ? each.value.destination_id : newrelic_notification_destination.this[each.value.name].id
+  product        = "IINT"
+  dynamic "property" {
+    for_each = each.value.channel_properties
+    content {
+      key   = property.value.key
+      value = property.value.value
+    }
+  }
+}
+
+resource "newrelic_workflow" "main" {
+  name                  = var.workflow_name
+  muting_rules_handling = var.workflow_muting_rules_handling
+  issues_filter {
+    name = "POLICY_FILTER"
+    type = "FILTER"
+    predicate {
+      attribute = "labels.policyIds"
+      operator  = "EXACTLY_MATCHES"
+      values    = [newrelic_alert_policy.main.id]
+    }
+  }
+  dynamic "destination" {
+    for_each = var.notifications
+    content {
+      channel_id            = newrelic_notification_channel.this[destination.value.name].id
+      notification_triggers = destination.value.notification_triggers
+    }
+  }
+}
+
 resource "newrelic_nrql_alert_condition" "this" {
   for_each  = { for i in var.nrql_alert_conditions : i.name => i }
   policy_id = newrelic_alert_policy.main.id
@@ -33,61 +90,4 @@ resource "newrelic_nrql_alert_condition" "this" {
   description                  = each.value.description
   violation_time_limit_seconds = each.value.violation_time_limit_seconds
   enabled                      = each.value.enabled
-}
-
-resource "newrelic_notification_destination" "this" {
-  for_each   = { for i in var.notifications : i.name => i if i.type != "SLACK" }
-  account_id = var.newrelic_account_id
-  name       = each.value.name
-  type       = each.value.type
-  dynamic "property" {
-    for_each = each.value.type == "PAGERDUTY_SERVICE_INTEGRATION" ? [{ key = "", value = "" }] : each.value.destination_properties
-    content {
-      key   = property.value.key
-      value = property.value.value
-    }
-  }
-  dynamic "auth_token" {
-    for_each = each.value.type == "PAGERDUTY_SERVICE_INTEGRATION" ? each.value.destination_auth_tokens : []
-    content {
-      prefix = auth_token.value.prefix
-      token  = auth_token.value.token
-    }
-  }
-}
-
-resource "newrelic_notification_channel" "this" {
-  for_each       = { for i in var.notifications : i.name => i }
-  name           = each.value.name
-  type           = each.value.type
-  destination_id = try(each.value.destination_id, newrelic_notification_destination.this[each.value.name].id)
-  product        = "IINT"
-  dynamic "property" {
-    for_each = each.value.channel_properties
-    content {
-      key   = property.value.key
-      value = property.value.value
-    }
-  }
-}
-
-resource "newrelic_workflow" "main" {
-  name                  = var.workflow_name
-  muting_rules_handling = var.workflow_muting_rules_handling
-  issues_filter {
-    name = "POLICY_FILTER"
-    type = "FILTER"
-    predicate {
-      attribute = "labels.policyIds"
-      operator  = "EXACTLY_MATCHES"
-      values    = [newrelic_alert_policy.main.id]
-    }
-  }
-  dynamic "destination" {
-    for_each = var.notifications
-    content {
-      channel_id            = newrelic_notification_channel.this[destination.value.name].id
-      notification_triggers = destination.value.notification_triggers
-    }
-  }
 }
