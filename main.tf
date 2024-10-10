@@ -70,7 +70,8 @@ resource "newrelic_nrql_alert_condition" "this" {
     query = each.value.nrql
   }
   # Condition thresholds
-  type = each.value.type
+  type               = each.value.type
+  baseline_direction = each.value.type == "static" ? null : each.value.baseline_direction
   critical {
     operator              = each.value.operator
     threshold             = each.value.threshold
@@ -85,6 +86,7 @@ resource "newrelic_nrql_alert_condition" "this" {
   aggregation_method = each.value.aggregation_method
   aggregation_delay  = each.value.aggregation_method == "EVENT_FLOW" ? each.value.aggregation_delay : null
   aggregation_timer  = each.value.aggregation_method == "EVENT_TIMER" ? each.value.aggregation_timer : null
+  slide_by           = each.value.slide_by == "false" ? null : each.value.slide_by
   fill_option        = each.value.fill_option
   # Additional settings
   description                  = each.value.description
