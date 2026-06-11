@@ -4,22 +4,43 @@ resource "newrelic_alert_policy" "main" {
 }
 
 resource "newrelic_notification_destination" "this" {
-  for_each   = { for i in var.notifications : i.name => i if i.type != "SLACK" }
+  for_each   = { for i in var.notifications : i.name => i if i.destination_id == null }
   account_id = var.newrelic_account_id
   name       = each.value.name
   type       = each.value.type
   dynamic "property" {
-    for_each = each.value.type == "PAGERDUTY_SERVICE_INTEGRATION" ? [{ key = "", value = "" }] : each.value.destination_properties
+    for_each = coalesce(each.value.destination_properties, [{ key = "", value = "" }])
     content {
       key   = property.value.key
       value = property.value.value
     }
   }
   dynamic "auth_token" {
-    for_each = each.value.type == "PAGERDUTY_SERVICE_INTEGRATION" ? each.value.destination_auth_tokens : []
+    for_each = coalesce(each.value.destination_auth_tokens, [])
     content {
       prefix = auth_token.value.prefix
       token  = auth_token.value.token
+    }
+  }
+  dynamic "auth_basic" {
+    for_each = each.value.destination_auth_basic != null ? [each.value.destination_auth_basic] : []
+    content {
+      user     = auth_basic.value.user
+      password = auth_basic.value.password
+    }
+  }
+  dynamic "auth_custom_header" {
+    for_each = each.value.destination_auth_custom_header != null ? [each.value.destination_auth_custom_header] : []
+    content {
+      key   = auth_custom_header.value.key
+      value = auth_custom_header.value.value
+    }
+  }
+  dynamic "secure_url" {
+    for_each = each.value.destination_secure_url != null ? [each.value.destination_secure_url] : []
+    content {
+      prefix        = secure_url.value.prefix
+      secure_suffix = secure_url.value.secure_suffix
     }
   }
 }
@@ -28,7 +49,7 @@ resource "newrelic_notification_channel" "this" {
   for_each       = { for i in var.notifications : i.name => i }
   name           = each.value.name
   type           = each.value.type
-  destination_id = each.value.type == "SLACK" ? each.value.destination_id : newrelic_notification_destination.this[each.value.name].id
+  destination_id = each.value.destination_id != null ? each.value.destination_id : newrelic_notification_destination.this[each.value.name].id
   product        = "IINT"
   dynamic "property" {
     for_each = each.value.channel_properties

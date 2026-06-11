@@ -33,6 +33,18 @@ variable "notifications" {
       key   = string
       value = string
     })))
+    destination_auth_basic = optional(object({
+      user     = string
+      password = string
+    }))
+    destination_auth_custom_header = optional(object({
+      key   = string
+      value = string
+    }))
+    destination_secure_url = optional(object({
+      prefix        = string
+      secure_suffix = string
+    }))
     destination_id = optional(string)
     channel_properties = list(object({
       key   = string

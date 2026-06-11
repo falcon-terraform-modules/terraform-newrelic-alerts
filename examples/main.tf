@@ -43,6 +43,44 @@ module "alerts" {
       ]
     },
     {
+      name = "Example Production Alerts Webhook"
+      type = "WEBHOOK"
+      destination_secure_url = {
+        prefix = "https://example.com/webhook"
+        secure_suffix = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      }
+      destination_auth_custom_header = {
+        key   = "Authorization"
+        value = "Bearer xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      }
+      channel_properties = [
+        {
+          key   = "payload"
+          value = <<-EOT
+            {
+              "id": {{ json issueId }},
+              "issueUrl": {{ json issuePageUrl }},
+              "title": {{ json annotations.title.[0] }},
+              "priority": {{ json priority }},
+              "impactedEntities": {{json entitiesData.names}},
+              "state": {{ json state }},
+              "trigger": {{ json triggerEvent }},
+              "isCorrelated": {{ json isCorrelated }},
+              "createdAt": {{ createdAt }},
+              "updatedAt": {{ updatedAt }},
+              "sources": {{ json accumulations.source }},
+              "alertPolicyNames": {{ json accumulations.policyName }},
+              "alertConditionNames": {{ json accumulations.conditionName }},
+              "workflowName": {{ json workflowName }}
+            }
+          EOT
+        }
+      ]
+      notification_triggers = [
+        "ACTIVATED"
+      ]
+    },
+    {
       name = "Example Service"
       type = "PAGERDUTY_SERVICE_INTEGRATION"
       destination_auth_tokens = [
