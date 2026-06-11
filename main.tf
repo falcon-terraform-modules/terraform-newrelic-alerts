@@ -62,6 +62,7 @@ resource "newrelic_notification_channel" "this" {
 
 resource "newrelic_workflow" "main" {
   name                  = var.workflow_name
+  enabled               = var.workflow_enabled
   muting_rules_handling = var.workflow_muting_rules_handling
   issues_filter {
     name = "POLICY_FILTER"

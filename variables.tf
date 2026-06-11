@@ -24,6 +24,12 @@ variable "workflow_muting_rules_handling" {
   type        = string
 }
 
+variable "workflow_enabled" {
+  description = "Whether the workflow is enabled."
+  type        = bool
+  default     = true
+}
+
 variable "notifications" {
   description = "Specifies the parameters necessary to configure alert notification destinations. See `Nested Inputs Reference` for details."
   type = list(object({
